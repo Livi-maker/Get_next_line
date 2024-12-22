@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   get_next_line.c                                    :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: ldei-sva <ldei-sva@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/12/22 21:32:34 by ldei-sva          #+#    #+#             */
+/*   Updated: 2024/12/22 21:36:16 by ldei-sva         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "get_next_line.h"
 
 char	*uploadstack(char *stack)
@@ -48,7 +60,7 @@ char	*setmemory(char *stack, char *fileread, int len, int byte_read)
 		}
 		stack[i] = '\0';
 	}
-	return(stack);
+	return (stack);
 }
 
 char	*createstr(int index, char *fileread, char *line)
@@ -76,7 +88,7 @@ char	*search_for_newline(char *stack, char *fileread, char *line)
 		while (stack[index] != '\n')
 			index++;
 		line = createstr(index + 1, stack, line);
-			return (line);
+		return (line);
 	}
 	while (fileread[index] != '\n' && fileread[index] != '\0')
 		index++;
@@ -86,14 +98,13 @@ char	*search_for_newline(char *stack, char *fileread, char *line)
 
 char	*get_next_line(int fd)
 {
-	static	char	*stack = NULL;
+	static char		*stack = NULL;
 	char			*fileread;
 	int				byte_read;
-	char			*line;
+	char			*line = NULL;
 	char			*temp;
 
 	fileread = malloc (BUFFER_SIZE + 1);
-	line = NULL;
 	if (fileread == NULL)
 		return (NULL);
 	if (stack == NULL || (stack && is_there_newline(stack) == 0))

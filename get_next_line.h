@@ -6,7 +6,7 @@
 /*   By: ldei-sva <ldei-sva@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/21 13:36:33 by ldei-sva          #+#    #+#             */
-/*   Updated: 2024/12/22 14:22:03 by ldei-sva         ###   ########.fr       */
+/*   Updated: 2024/12/22 21:37:56 by ldei-sva         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,8 @@
 #  define BUFFER_SIZE 42
 # endif
 
-int	is_there_newline(char *stack);
+char	*get_next_line(int fd);
+int		is_there_newline(char *stack);
 char	*ft_strjoin(char	*stack, char	*fileread);
 int		ft_strlen(char *str);
 
