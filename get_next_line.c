@@ -1,16 +1,41 @@
 #include "get_next_line.h"
 
+char	*uploadstack(char *stack)
+{
+	char	*temp;
+	int		size;
+	int		i;
+
+	i = 0;
+	size = ft_strlen(stack);
+	temp = malloc ((size + 1) * (sizeof(char)));
+	while (*stack)
+	{
+		temp[i] = *stack;
+		i++;
+		stack++;
+	}
+	temp[i] = '\0';
+	return (temp);
+}
+
 char	*setmemory(char *stack, char *fileread, int len, int byte_read)
 {
-	int 	i;
+	int		i;
+	char	*temp;
+
 	if (stack && len == ft_strlen(stack) && byte_read < BUFFER_SIZE)
 	{
 		free (stack);
 		stack = NULL;
 	}
 	else if (stack)
-		stack += len;
-	else 
+	{
+		temp = stack;
+		stack = uploadstack(stack + len);
+		free (temp);
+	}
+	if (!stack && len < ft_strlen(fileread))
 	{
 		i = 0;
 		fileread += len;
@@ -41,10 +66,9 @@ char	*createstr(int index, char *fileread, char *line)
 	return (line);
 }
 
-char	*search_for_newline(char *stack, char *fileread, char *line, int fd)
+char	*search_for_newline(char *stack, char *fileread, char *line)
 {
 	int		index;
-	char	*temp;
 
 	index = 0;
 	if (stack != NULL)
@@ -63,12 +87,13 @@ char	*search_for_newline(char *stack, char *fileread, char *line, int fd)
 char	*get_next_line(int fd)
 {
 	static	char	*stack = NULL;
-	char		*fileread;
-	size_t		byte_read;
-	char		*line;
-	char		*temp;
+	char			*fileread;
+	int				byte_read;
+	char			*line;
+	char			*temp;
 
 	fileread = malloc (BUFFER_SIZE + 1);
+	line = NULL;
 	if (fileread == NULL)
 		return (NULL);
 	if (stack == NULL || (stack && is_there_newline(stack) == 0))
@@ -84,16 +109,16 @@ char	*get_next_line(int fd)
 		{
 			temp = stack;
 			stack = ft_strjoin(stack, fileread);
-			//free (temp);
+			free (temp);
 		}
 	}
-	line = search_for_newline(stack, fileread, line, fd);
+	line = search_for_newline(stack, fileread, line);
 	stack = setmemory(stack, fileread, ft_strlen(line), byte_read);
 	free (fileread);
 	return (line);
 }
 
-int	main()
+/*int	main()
 {
 	int	fd;
 	char	*line;
@@ -107,5 +132,4 @@ int	main()
 		printf("%s", line);
 		line = get_next_line(fd);
 	}
-
-}
+}*/
