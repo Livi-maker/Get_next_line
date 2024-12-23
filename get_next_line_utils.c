@@ -6,7 +6,7 @@
 /*   By: ldei-sva <ldei-sva@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/22 21:37:23 by ldei-sva          #+#    #+#             */
-/*   Updated: 2024/12/22 21:37:26 by ldei-sva         ###   ########.fr       */
+/*   Updated: 2024/12/23 12:00:42 by ldei-sva         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,8 @@ int	is_there_newline(char *stack)
 	int	i;
 
 	i = 0;
+	if (!stack)
+		return (0);
 	while (stack[i])
 	{
 		if (stack[i] == '\n')
@@ -37,7 +39,7 @@ char	*ft_strjoin(char *stack, char *fileread)
 	i = 0;
 	i2 = 0;
 	temp = malloc ((size + 1) * (sizeof(char)));
-	while (stack[i])
+	while (stack && stack[i])
 	{
 		temp[i] = stack[i];
 		i++;
@@ -57,7 +59,7 @@ int	ft_strlen(char *str)
 	int	i;
 
 	i = 0;
-	while (*str)
+	while (str && *str)
 	{
 		i++;
 		str++;

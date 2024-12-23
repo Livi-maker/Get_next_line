@@ -6,13 +6,13 @@
 /*   By: ldei-sva <ldei-sva@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/22 21:32:34 by ldei-sva          #+#    #+#             */
-/*   Updated: 2024/12/22 21:36:16 by ldei-sva         ###   ########.fr       */
+/*   Updated: 2024/12/23 12:02:07 by ldei-sva         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
 
-char	*uploadstack(char *stack)
+char	*updatestack(char *stack)
 {
 	char	*temp;
 	int		size;
@@ -31,12 +31,12 @@ char	*uploadstack(char *stack)
 	return (temp);
 }
 
-char	*setmemory(char *stack, char *fileread, int len, int byte_read)
+char	*setmemory(char *stack, int len, int byte_read)
 {
 	int		i;
 	char	*temp;
 
-	if (stack && len == ft_strlen(stack) && byte_read < BUFFER_SIZE)
+	if (stack && len == ft_strlen(stack))
 	{
 		free (stack);
 		stack = NULL;
@@ -44,21 +44,8 @@ char	*setmemory(char *stack, char *fileread, int len, int byte_read)
 	else if (stack)
 	{
 		temp = stack;
-		stack = uploadstack(stack + len);
+		stack = updatestack(stack + len);
 		free (temp);
-	}
-	if (!stack && len < ft_strlen(fileread))
-	{
-		i = 0;
-		fileread += len;
-		stack = malloc ((ft_strlen(fileread) + 1) * (sizeof(char)));
-		while (*fileread)
-		{
-			stack[i] = *fileread;
-			fileread++;
-			i++;
-		}
-		stack[i] = '\0';
 	}
 	return (stack);
 }
@@ -74,7 +61,7 @@ char	*createstr(int index, char *fileread, char *line)
 		line[i] = fileread[i];
 		i++;
 	}
-	line[i] = '\0';
+	line[i] = fileread[i];
 	return (line);
 }
 
@@ -83,53 +70,55 @@ char	*search_for_newline(char *stack, char *fileread, char *line)
 	int		index;
 
 	index = 0;
-	if (stack != NULL)
-	{
-		while (stack[index] != '\n')
-			index++;
-		line = createstr(index + 1, stack, line);
-		return (line);
-	}
-	while (fileread[index] != '\n' && fileread[index] != '\0')
+	while (stack[index] != '\n' && stack[index] != '\0')
 		index++;
-	line = createstr(index + 1, fileread, line);
+	line = createstr(index + 1, stack, line);
 	return (line);
+}
+
+int	readfile(int fd, char *fileread)
+{
+	int	byte_read;
+
+	byte_read = read(fd, fileread, BUFFER_SIZE);
+	if (byte_read < 0)
+		return (-1);
+	fileread[byte_read] = '\0';
+	return (byte_read);
 }
 
 char	*get_next_line(int fd)
 {
 	static char		*stack = NULL;
-	char			*fileread;
+	char			*fileread = NULL;
 	int				byte_read;
 	char			*line = NULL;
 	char			*temp;
 
 	fileread = malloc (BUFFER_SIZE + 1);
+	byte_read = 1;
 	if (fileread == NULL)
 		return (NULL);
-	if (stack == NULL || (stack && is_there_newline(stack) == 0))
+	while (is_there_newline(stack) == 0 || byte_read == 0)
 	{
-		byte_read = read(fd, fileread, BUFFER_SIZE);
-		if (byte_read == -1 || (stack == NULL && byte_read == 0))
+		byte_read = readfile(fd, fileread);
+		if (byte_read == -1 || (!stack && byte_read == 0))
 		{
 			free (fileread);
 			return (NULL);
 		}
-		fileread[byte_read] = '\0';
-		if (stack)
-		{
-			temp = stack;
-			stack = ft_strjoin(stack, fileread);
+		temp = stack;
+		stack = ft_strjoin(stack, fileread);
+		if (temp)
 			free (temp);
-		}
 	}
 	line = search_for_newline(stack, fileread, line);
-	stack = setmemory(stack, fileread, ft_strlen(line), byte_read);
+	stack = setmemory(stack, ft_strlen(line), byte_read);
 	free (fileread);
 	return (line);
 }
 
-/*int	main()
+int	main()
 {
 	int	fd;
 	char	*line;
@@ -140,7 +129,7 @@ char	*get_next_line(int fd)
 		return (1);
 	while (line != NULL)
 	{
-		printf("%s", line);
+		printf("%slinea\n", line);
 		line = get_next_line(fd);
 	}
-}*/
+}
