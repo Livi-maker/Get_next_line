@@ -1,16 +1,16 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   get_next_line.c                                    :+:      :+:    :+:   */
+/*   get_next_line_bonus.c                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ldei-sva <ldei-sva@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/22 21:32:34 by ldei-sva          #+#    #+#             */
-/*   Updated: 2024/12/24 04:09:12 by ldei-sva         ###   ########.fr       */
+/*   Updated: 2024/12/24 05:09:35 by ldei-sva         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "get_next_line.h"
+#include "get_next_line_bonus.h"
 
 char	*setmemory(char *stack, int len)
 {
@@ -84,7 +84,7 @@ int	readfile(int fd, char *fileread)
 
 char	*get_next_line(int fd)
 {
-	static char		*stack = NULL;
+	static char		*stack[1024];
 	char			*fileread;
 	int				byte_read;
 	char			*line;
@@ -94,16 +94,16 @@ char	*get_next_line(int fd)
 	if (fileread == NULL || fd < 0)
 		return (free(fileread), NULL);
 	byte_read = 1;
-	while (is_there_newline(stack) == 0)
+	while (is_there_newline(stack[fd]) == 0)
 	{
 		byte_read = readfile(fd, fileread);
-		if (byte_read == -1 || (!stack && byte_read == 0))
+		if (byte_read == -1 || (!stack[fd] && byte_read == 0))
 			return (free (fileread), NULL);
 		if (byte_read == 0)
 			break ;
-		stack = freestack(stack, fileread);
+		stack[fd] = freestack(stack[fd], fileread);
 	}
-	line = search_for_newline(stack, line);
-	stack = setmemory(stack, ft_strlen(line));
+	line = search_for_newline(stack[fd], line);
+	stack[fd] = setmemory(stack[fd], ft_strlen(line));
 	return (free (fileread), line);
 }
